@@ -7,6 +7,8 @@
 # Each of the scripts calls
 # source("R/leucosphyrus_model/leuco_functions.R") # functions that simulations use
 
+# Download bioclim data for '/leuco_prepare_raster_data.R' with 
+# https://geodata.ucdavis.edu/climate/worldclim/2_1/base/wc2.1_30s_bio.zip
 
 # Step 1: Preparing covariate and raster maps ##################################
 source("R/leucosphyrus_model/leuco_prepare_raster_data.R")

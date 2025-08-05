@@ -19,7 +19,6 @@ plot(leuco_dist_map)
 # bioclimactic variables from worldclim
 # https://worldclim.org/data/bioclim.html
 # bio <- worldclim_global(var = "bio", res = 0.5, path = "data/downloads")
-# se_asia_extent <- ext(85, 140, -15, 35)
 
 
 library(terra)

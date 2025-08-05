@@ -1,0 +1,9 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+/data
+*.RData
+*.DS_Store
+*.html
+/grids

@@ -24,7 +24,7 @@ plot(leuco_dist_map)
 library(terra)
 
 # Path to the folder with the .tif files
-bioclim_path <- "grids"
+bioclim_path <- "data/grids/leuco_rasters"
 
 # Stack all 19 .tif files
 bioclim_stack <- rast(file.path(bioclim_path, paste0("wc2.1_30s_bio_", 1:19, ".tif")))

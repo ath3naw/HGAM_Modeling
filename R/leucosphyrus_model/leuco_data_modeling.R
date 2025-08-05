@@ -8,7 +8,7 @@ library(mgcv)
 library(sp)
 source("R/leucosphyrus_model/leuco_functions.R")
 # part 4
-pa_model_data <- read_csv("data/tabular/hgam_leuco_data_nobias.csv")
+pa_model_data <- read_csv("leuco_data/hgam_leuco_data_nobias.csv")
 covs <- terra::rast("data/grids/covs_hgam.tif")
 leuco_map_mask <- terra::rast("data/grids/leuco_map_mask.tif")
 cp <- c("leucosphyrus", "dirus")

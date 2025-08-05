@@ -35,5 +35,5 @@ off
 # ok so these are presence-only points
 asia_vec_data <- asia_vec_data |> rename(lonx=longitude, laty=latitude, Species=species_plain)
 write.csv(asia_vec_data,
-          file = "data/tabular/asia_vec_data.csv",
+          file = "leuco_data/asia_vec_data.csv",
           row.names = FALSE)

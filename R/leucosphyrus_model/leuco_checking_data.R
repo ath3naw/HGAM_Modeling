@@ -10,7 +10,7 @@ source("R/leucosphyrus_model/leuco_functions.R")
 # part 3
 
 # read in data
-leuco_data <- read_csv("data/tabular/Leucosphyrus_Data.csv")
+leuco_data <- read_csv("leuco_data/Leucosphyrus_Data.csv")
 
 # filter columns
 leuco_data <- leuco_data |> select(-any_of(c(
@@ -128,7 +128,7 @@ pa_tabular <- leuco_data %>%
 # find max number of sites collected
 max_id <- max(pa_tabular$site_id)
 # read in leuco data (po points)
-asia_vec_data <- read_csv("data/tabular/asia_vec_data.csv")
+asia_vec_data <- read_csv("leuco_data/asia_vec_data.csv")
 # convert to tabular format
 pa_tabular2 <- asia_vec_data %>%
   group_by(lonx, laty) %>%
@@ -155,6 +155,6 @@ pa_model_data$sp <- as.factor(pa_model_data$sp)
 
 # save it
 write.csv(pa_model_data,
-          file = "data/tabular/hgam_leuco_data_nobias.csv",
+          file = "leuco_data/hgam_leuco_data_nobias.csv",
           row.names = FALSE)
 

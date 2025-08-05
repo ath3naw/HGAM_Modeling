@@ -7,6 +7,9 @@ library(dplyr)
 library(mgcv)
 source("R/hgam_multiple_layers/functions_multiple.R")
 
+# can add a seed
+set.seed(136)
+
 # load in variables
 par(mfrow = c(1,1))
 covs <- terra::rast("data/grids/covariates.tif")
@@ -26,7 +29,7 @@ write.csv(n_sp,
 max_catch_size <- 20
 
 # group level model
-# can add more covariates if needed
+# can change covariates as needed
 beta_group <- c(ttemp = 0.02, ttemp2 = -0.2, 
                 #tiso = 0.001, 
                 #tseas = -0.001, 
@@ -67,6 +70,14 @@ cor_unbiased <- vector("list", length=n)
 cor_allbiased <- vector("list", length=n)
 cor_po_unbiased <- vector("list", length=n)
 cor_po_allbiased <- vector("list", length=n)
+
+# spearman correlation for everything
+cor_unbiased_sp <- vector("list", length=n)
+cor_allbiased_sp <- vector("list", length=n)
+cor_po_unbiased_sp <- vector("list", length=n)
+cor_po_allbiased_sp <- vector("list", length=n)
+
+# initializing variable, all_bias, will overwrite later
 all_bias <- mad_mask
 
 # running n number of simulations
@@ -448,6 +459,7 @@ for(x in 1:n){
   pred_pa_modGS_nogp <- rast(rep(mad_mask, num_species))
   covs$not_complex <- 1
   cor_unbiased[[x]] <- data.frame(E = 0, GS=0, S=0, NoG=0) # everything, group + species data, species data, species-only smooth
+  cor_unbiased_sp[[x]] <- data.frame(E = 0, GS=0, S=0, NoG=0)
   # looping through all species + predicting
   for(i in 1:num_species){
     covs$sp <- factor(i)
@@ -485,6 +497,10 @@ for(x in 1:n){
     cor_unbiased[[x]][i, 2] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS_gp[[i]])
     cor_unbiased[[x]][i, 3] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS_nocp[[i]])
     cor_unbiased[[x]][i, 4] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS_nogp[[i]])
+    cor_unbiased_sp[[x]][i, 1] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS[[i]])
+    cor_unbiased_sp[[x]][i, 2] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS_gp[[i]])
+    cor_unbiased_sp[[x]][i, 3] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS_nocp[[i]])
+    cor_unbiased_sp[[x]][i, 4] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS_nogp[[i]])
   }
   
 
@@ -528,6 +544,7 @@ for(x in 1:n){
   pred_pa_modGS_allbiased_nogp <- rast(rep(mad_mask, num_species))
   covs$not_complex <- 1
   cor_allbiased[[x]] <- data.frame(E = 0, GS=0, S=0, NoG=0)
+  cor_allbiased_sp[[x]] <- data.frame(E = 0, GS=0, S=0, NoG=0)
   
   # looping through all species + predicting
   for(i in 1:num_species){
@@ -566,6 +583,10 @@ for(x in 1:n){
     cor_allbiased[[x]][i, 2] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS_allbiased_gp[[i]])
     cor_allbiased[[x]][i, 3] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS_allbiased_nocp[[i]])
     cor_allbiased[[x]][i, 4] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS_allbiased_nogp[[i]])
+    cor_allbiased_sp[[x]][i, 1] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS_allbiased[[i]])
+    cor_allbiased_sp[[x]][i, 2] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS_allbiased_gp[[i]])
+    cor_allbiased_sp[[x]][i, 3] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS_allbiased_nocp[[i]])
+    cor_allbiased_sp[[x]][i, 4] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS_allbiased_nogp[[i]])
   }
   
   ### presence-only data! *******************************************************
@@ -609,6 +630,7 @@ for(x in 1:n){
   pred_po_modGS_nogp <- rast(rep(mad_mask, num_species))
   covs$not_complex <- 1
   cor_po_unbiased[[x]] <- data.frame(E = 0, GS=0, S=0, NoG=0)
+  cor_po_unbiased_sp[[x]] <- data.frame(E = 0, GS=0, S=0, NoG=0)
   # looping through all species + predicting
   for(i in 1:num_species){
     covs$sp <- factor(i)
@@ -646,6 +668,10 @@ for(x in 1:n){
     cor_po_unbiased[[x]][i, 2] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_gp[[i]])
     cor_po_unbiased[[x]][i, 3] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_nocp[[i]])
     cor_po_unbiased[[x]][i, 4] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_nogp[[i]])
+    cor_po_unbiased_sp[[x]][i, 1] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS[[i]])
+    cor_po_unbiased_sp[[x]][i, 2] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_gp[[i]])
+    cor_po_unbiased_sp[[x]][i, 3] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_nocp[[i]])
+    cor_po_unbiased_sp[[x]][i, 4] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_nogp[[i]])
   }
   
   # biased po data #############################################################
@@ -688,6 +714,7 @@ for(x in 1:n){
   pred_po_modGS_allbiased_nogp <- rast(rep(mad_mask, num_species))
   covs$not_complex <- 1
   cor_po_allbiased[[x]] <- data.frame(E = 0, GS=0, S=0, NoG=0)
+  cor_po_allbiased_sp[[x]] <- data.frame(E = 0, GS=0, S=0, NoG=0)
   # looping through all species + predicting
   for(i in 1:num_species){
     covs$sp <- factor(i)
@@ -725,6 +752,10 @@ for(x in 1:n){
     cor_po_allbiased[[x]][i, 2] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_allbiased_gp[[i]])
     cor_po_allbiased[[x]][i, 3] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_allbiased_nocp[[i]])
     cor_po_allbiased[[x]][i, 4] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_allbiased_nogp[[i]])
+    cor_po_allbiased_sp[[x]][i, 1] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_allbiased[[i]])
+    cor_po_allbiased_sp[[x]][i, 2] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_allbiased_gp[[i]])
+    cor_po_allbiased_sp[[x]][i, 3] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_allbiased_nocp[[i]])
+    cor_po_allbiased_sp[[x]][i, 4] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_allbiased_nogp[[i]])
   }
 }
 

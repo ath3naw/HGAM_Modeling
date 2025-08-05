@@ -7,6 +7,9 @@ library(dplyr)
 library(mgcv)
 source("R/hgam_simplified/functions.R")
 
+# can add a seed
+set.seed(136)
+
 # load in variables
 par(mfrow = c(1,1))
 covs <- terra::rast("data/grids/covariates.tif")
@@ -19,7 +22,7 @@ n_sp <- 10
 max_catch_size <- 10  # was 10
 
 # group level model
-#ttemp was 0.02, ttemp2=-0.05, ttemp test was ttemp=0, ttemp2 = -0.2/0.3, tiso=0.001
+# can change covariates as needed
 beta_group <- c(ttemp = 0.02, ttemp2 = -0.1, 
                 #tiso = 0.001, 
                 #tseas = -0.001, 
@@ -57,6 +60,13 @@ cor_unbiased <- vector("list", length=n)
 cor_allbiased <- vector("list", length=n)
 cor_po_unbiased <- vector("list", length=n)
 cor_po_allbiased <- vector("list", length=n)
+
+# spearman correlation for everything
+cor_unbiased_sp <- vector("list", length=n)
+cor_allbiased_sp <- vector("list", length=n)
+cor_po_unbiased_sp <- vector("list", length=n)
+cor_po_allbiased_sp <- vector("list", length=n)
+
 # initializing variable, all_bias, will overwrite later
 all_bias <- mad_mask
 
@@ -306,6 +316,7 @@ for(x in 1:n){
   covs$not_complex <- 1
   # data frame to store results
   cor_unbiased[[x]] <- data.frame(CP = 0, NoCP=0, NoGP=0)
+  cor_unbiased_sp[[x]] <- data.frame(CP = 0, NoCP=0, NoGP=0)
   # run through all species
   for(letter in letters[1:n_sp]){
     covs$sp <- letter
@@ -327,6 +338,9 @@ for(x in 1:n){
     cor_unbiased[[x]][i, 1] <- compute_cor(prob_pres[[i]], pred_pa_modGS[[i]])
     cor_unbiased[[x]][i, 2] <- compute_cor(prob_pres[[i]], pred_pa_modGS_nocp[[i]])
     cor_unbiased[[x]][i, 3] <- compute_cor(prob_pres[[i]], pred_pa_modGS_nogp[[i]])
+    cor_unbiased_sp[[x]][i, 1] <- compute_cor_po(prob_pres[[i]], pred_pa_modGS[[i]])
+    cor_unbiased_sp[[x]][i, 2] <- compute_cor_po(prob_pres[[i]], pred_pa_modGS_nocp[[i]])
+    cor_unbiased_sp[[x]][i, 3] <- compute_cor_po(prob_pres[[i]], pred_pa_modGS_nogp[[i]])
   }
   
   # biased ######################################################################
@@ -364,6 +378,7 @@ for(x in 1:n){
   covs$not_complex <- 1
   # data frame to store results
   cor_allbiased[[x]] <- data.frame(CP = 0, NoCP=0, NoGP=0)
+  cor_allbiased_sp[[x]] <- data.frame(CP = 0, NoCP=0, NoGP=0)
   # go through all species
   for(letter in letters[1:n_sp]){
     covs$sp <- letter
@@ -385,6 +400,9 @@ for(x in 1:n){
     cor_allbiased[[x]][i, 1] <- compute_cor(prob_pres[[i]], pred_pa_modGS_allbiased[[i]])
     cor_allbiased[[x]][i, 2] <- compute_cor(prob_pres[[i]], pred_pa_modGS_allbiased_nocp[[i]])
     cor_allbiased[[x]][i, 3] <- compute_cor(prob_pres[[i]], pred_pa_modGS_allbiased_nogp[[i]])
+    cor_allbiased_sp[[x]][i, 1] <- compute_cor_po(prob_pres[[i]], pred_pa_modGS_allbiased[[i]])
+    cor_allbiased_sp[[x]][i, 2] <- compute_cor_po(prob_pres[[i]], pred_pa_modGS_allbiased_nocp[[i]])
+    cor_allbiased_sp[[x]][i, 3] <- compute_cor_po(prob_pres[[i]], pred_pa_modGS_allbiased_nogp[[i]])
   }
   
   # presence-only data! *********************************************************
@@ -423,6 +441,7 @@ for(x in 1:n){
   covs$not_complex <- 1
   # data frame to store results
   cor_po_unbiased[[x]] <- data.frame(CP = 0, NoCP=0, NoGP=0)
+  cor_po_unbiased_sp[[x]] <- data.frame(CP = 0, NoCP=0, NoGP=0)
   # go through all species
   for(letter in letters[1:n_sp]){
     covs$sp <- letter
@@ -444,6 +463,9 @@ for(x in 1:n){
     cor_po_unbiased[[x]][i, 1] <- compute_cor_po(prob_pres[[i]], pred_po_modGS[[i]])
     cor_po_unbiased[[x]][i, 2] <- compute_cor_po(prob_pres[[i]], pred_po_modGS_nocp[[i]])
     cor_po_unbiased[[x]][i, 3] <- compute_cor_po(prob_pres[[i]], pred_po_modGS_nogp[[i]])
+    cor_po_unbiased_sp[[x]][i, 1] <- compute_cor_po(prob_pres[[i]], pred_po_modGS[[i]])
+    cor_po_unbiased_sp[[x]][i, 2] <- compute_cor_po(prob_pres[[i]], pred_po_modGS_nocp[[i]])
+    cor_po_unbiased_sp[[x]][i, 3] <- compute_cor_po(prob_pres[[i]], pred_po_modGS_nogp[[i]])
   }
   
   # biased po data ##############################################################
@@ -481,6 +503,7 @@ for(x in 1:n){
   covs$not_complex <- 1
   # data frame to store results
   cor_po_allbiased[[x]] <- data.frame(CP = 0, NoCP=0, NoGP=0)
+  cor_po_allbiased_sp[[x]] <- data.frame(CP = 0, NoCP=0, NoGP=0)
   # go through all species
   for(letter in letters[1:n_sp]){
     covs$sp <- letter
@@ -502,6 +525,9 @@ for(x in 1:n){
     cor_po_allbiased[[x]][i, 1] <- compute_cor_po(prob_pres[[i]], pred_po_modGS_allbiased[[i]])
     cor_po_allbiased[[x]][i, 2] <- compute_cor_po(prob_pres[[i]], pred_po_modGS_allbiased_nocp[[i]])
     cor_po_allbiased[[x]][i, 3] <- compute_cor_po(prob_pres[[i]], pred_po_modGS_allbiased_nogp[[i]])
+    cor_po_allbiased_sp[[x]][i, 1] <- compute_cor_po(prob_pres[[i]], pred_po_modGS_allbiased[[i]])
+    cor_po_allbiased_sp[[x]][i, 2] <- compute_cor_po(prob_pres[[i]], pred_po_modGS_allbiased_nocp[[i]])
+    cor_po_allbiased_sp[[x]][i, 3] <- compute_cor_po(prob_pres[[i]], pred_po_modGS_allbiased_nogp[[i]])
   }
 }
 
@@ -523,6 +549,24 @@ write.csv(cor_po_unbiased,
           row.names = FALSE)
 write.csv(cor_po_allbiased,
           file = "data/tabular/cor_po_allbiased_23.csv",
+          row.names = FALSE)
+
+cor_unbiased_sp <- bind_rows(cor_unbiased_sp, .id="column_label") %>% select(-column_label)
+cor_allbiased_sp <- bind_rows(cor_allbiased_sp, .id="column_label") %>% select(-column_label)
+cor_po_unbiased_sp <- bind_rows(cor_po_unbiased_sp, .id="column_label") %>% select(-column_label)
+cor_po_allbiased_sp <- bind_rows(cor_po_allbiased_sp, .id="column_label") %>% select(-column_label)
+
+write.csv(cor_unbiased_sp,
+          file = "data/tabular/cor_unbiased_sp_23.csv",
+          row.names = FALSE)
+write.csv(cor_allbiased_sp,
+          file = "data/tabular/cor_allbiased_sp_23.csv",
+          row.names = FALSE)
+write.csv(cor_po_unbiased_sp,
+          file = "data/tabular/cor_po_unbiased_sp_23.csv",
+          row.names = FALSE)
+write.csv(cor_po_allbiased_sp,
+          file = "data/tabular/cor_po_allbiased_sp_23.csv",
           row.names = FALSE)
 
 # can start from here if simulations finished

@@ -17,7 +17,6 @@ into stages of preparing distribution rasters, simulating data, and
 modeling/predicting results.
 
 3. 'leucosphyrus_model/' - all R scripts for cleaning and modeling collected
-leucosphyrus data (Leucosphyrus_Data.csv in the data/tabular folder) using
-HGAM model
+leucosphyrus data using HGAM model
 
 ################################################################################

@@ -598,25 +598,32 @@ cor_po_allbiased_avg <- cor_po_allbiased %>%
   colMeans
 cor_po_allbiased_avg
 
+# create a map from each of the values to their names
+id_map <- c(
+  "1" = "All Data, All Smooths",
+  "2" = "Species-Only Data, All Smooths",
+  "3" = "Species-Only Smooths"
+)
+
 # calculate overall how many of each model was the winner
-max_col_unbiased <- max.col(cor_unbiased)
+max_col_unbiased <- factor(max.col(cor_unbiased), levels=names(id_map))
 max_unbiased <- table(max_col_unbiased)
-names(max_unbiased) <- c("All Data, All Smooths", "Species-Only Data, All Smooths", "Species-Only Smooths")
+names(max_unbiased) <- id_map[names(max_unbiased)]
 max_unbiased
 
-max_col_allbiased <- max.col(cor_allbiased)
+max_col_allbiased <- factor(max.col(cor_allbiased), levels=names(id_map))
 max_allbiased <- table(max_col_allbiased)
-names(max_allbiased) <- c("All Data, All Smooths", "Species-Only Data, All Smooths", "Species-Only Smooths")
+names(max_allbiased) <- id_map[names(max_allbiased)]
 max_allbiased
 
-max_col_po_unbiased <- max.col(cor_po_unbiased)
+max_col_po_unbiased <- factor(max.col(cor_po_unbiased), levels=names(id_map))
 max_po_unbiased <- table(max_col_po_unbiased)
-names(max_po_unbiased) <- c("All Data, All Smooths", "Species-Only Data, All Smooths", "Species-Only Smooths")
+names(max_po_unbiased) <- id_map[names(max_po_unbiased)]
 max_po_unbiased
 
-max_col_po_allbiased <- max.col(cor_po_allbiased)
+max_col_po_allbiased <- factor(max.col(cor_po_allbiased), levels=names(id_map))
 max_po_allbiased <- table(max_col_po_allbiased)
-names(max_po_allbiased) <- c("All Data, All Smooths", "Species-Only Data, All Smooths", "Species-Only Smooths")
+names(max_po_allbiased) <- id_map[names(max_po_allbiased)]
 max_po_allbiased
 
 # convert into better format for analysis
@@ -912,24 +919,24 @@ cor_po_allbiased_avg <- cor_po_allbiased %>%
 cor_po_allbiased_avg
 
 # calculate overall how many of each model was the winner
-max_col_unbiased <- max.col(cor_unbiased)
+max_col_unbiased <- factor(max.col(cor_unbiased), levels=names(id_map))
 max_unbiased <- table(max_col_unbiased)
-names(max_unbiased) <- c("All Data, All Smooths", "Species-Only Data, All Smooths", "Species-Only Smooths")
+names(max_unbiased) <- id_map[names(max_unbiased)]
 max_unbiased
 
-max_col_allbiased <- max.col(cor_allbiased)
+max_col_allbiased <- factor(max.col(cor_allbiased), levels=names(id_map))
 max_allbiased <- table(max_col_allbiased)
-names(max_allbiased) <- c("All Data, All Smooths", "Species-Only Data, All Smooths", "Species-Only Smooths")
+names(max_allbiased) <- id_map[names(max_allbiased)]
 max_allbiased
 
-max_col_po_unbiased <- max.col(cor_po_unbiased)
+max_col_po_unbiased <- factor(max.col(cor_po_unbiased), levels=names(id_map))
 max_po_unbiased <- table(max_col_po_unbiased)
-names(max_po_unbiased) <- c("All Data, All Smooths", "Species-Only Data, All Smooths", "Species-Only Smooths")
+names(max_po_unbiased) <- id_map[names(max_po_unbiased)]
 max_po_unbiased
 
-max_col_po_allbiased <- max.col(cor_po_allbiased)
+max_col_po_allbiased <- factor(max.col(cor_po_allbiased), levels=names(id_map))
 max_po_allbiased <- table(max_col_po_allbiased)
-names(max_po_allbiased) <- c("All Data, All Smooths", "Species-Only Data, All Smooths", "Species-Only Smooths")
+names(max_po_allbiased) <- id_map[names(max_po_allbiased)]
 max_po_allbiased
 
 # convert into better format for analysis

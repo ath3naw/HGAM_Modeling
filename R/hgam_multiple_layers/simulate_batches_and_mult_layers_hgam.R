@@ -80,8 +80,8 @@ cor_po_allbiased_sp <- vector("list", length=n)
 # initializing variable, all_bias, will overwrite later
 all_bias <- mad_mask
 
-# running n number of simulations
-for(x in 1:n){
+# running n number of simulations ### on 8 run pa unbiased species
+for(x in 9:n){
   # Preparing raster data *******************************************************
   # complex-level deviations
   complex_data <- data.frame(
@@ -182,7 +182,7 @@ for(x in 1:n){
   # find "rarest" species
   means <- global(rel_species_abund, "mean", na.rm = TRUE)[, 1]
   i <- which.min(means)
-  sp_bias <- prob_pres[[i]]
+  sp_bias <- prob_pres_sp[[i]]
   writeRaster(sp_bias,
               "data/grids/sp_bias.tif",
               overwrite = TRUE)
@@ -268,7 +268,7 @@ for(x in 1:n){
   ## unbiased data ##############################################################
   pa_model_data <- read_csv("data/tabular/hgam_multiple_layers/hgam_pa_data_med_nobias.csv")
   occurrence_coords <- pa_model_data[pa_model_data$pa==1,]
-  plot(prob_pres[[1]])
+  plot(prob_pres_sp[[1]])
   points(occurrence_coords[occurrence_coords$sp==1,]$x, occurrence_coords[occurrence_coords$sp==1,]$y, pch=16)
 
   write.csv(
@@ -788,6 +788,37 @@ write.csv(cor_po_allbiased,
           file = "data/tabular/hgam_multiple_layers/cor_po_allbiased.csv",
           row.names = FALSE)
 
+
+# adjusting data
+cor_unbiased_sp <- bind_rows(cor_unbiased_sp, .id="column_label") %>% select(-column_label) %>%
+  rename("All Data, All Smooths"=E, "Group + Species Data, All Smooths"=GS, "Species-Only Data, All Smooths"=S,
+         "Species-Only Smooths"=NoG)
+cor_allbiased_sp <- bind_rows(cor_allbiased_sp, .id="column_label") %>% select(-column_label) %>%
+  rename("All Data, All Smooths"=E, "Group + Species Data, All Smooths"=GS, "Species-Only Data, All Smooths"=S,
+         "Species-Only Smooths"=NoG)
+cor_po_unbiased_sp <- bind_rows(cor_po_unbiased_sp, .id="column_label") %>% select(-column_label) %>%
+  rename("All Data, All Smooths"=E, "Group + Species Data, All Smooths"=GS, "Species-Only Data, All Smooths"=S,
+         "Species-Only Smooths"=NoG)
+cor_po_allbiased_sp <- bind_rows(cor_po_allbiased_sp, .id="column_label") %>% select(-column_label) %>%
+  rename("All Data, All Smooths"=E, "Group + Species Data, All Smooths"=GS, "Species-Only Data, All Smooths"=S, 
+         "Species-Only Smooths"=NoG)
+
+# saving data
+write.csv(cor_unbiased_sp,
+          file = "data/tabular/hgam_multiple_layers/cor_unbiased_sp.csv",
+          row.names = FALSE)
+write.csv(cor_allbiased_sp,
+          file = "data/tabular/hgam_multiple_layers/cor_allbiased_sp.csv",
+          row.names = FALSE)
+write.csv(cor_po_unbiased_sp,
+          file = "data/tabular/hgam_multiple_layers/cor_po_unbiased_sp.csv",
+          row.names = FALSE)
+write.csv(cor_po_allbiased_sp,
+          file = "data/tabular/hgam_multiple_layers/cor_po_allbiased_sp.csv",
+          row.names = FALSE)
+
+
+# pearson and spearman metrics #################################################
 # can run from here if already saved
 cor_unbiased <- read_csv("data/tabular/hgam_multiple_layers/cor_unbiased.csv")
 cor_allbiased <- read_csv("data/tabular/hgam_multiple_layers/cor_allbiased.csv")
@@ -864,13 +895,13 @@ ggplot(summary_df, aes(x = Model, y = Type, fill = Mean)) +
     NoG = "Species-Only Smooths"
   )) +
   labs(
-    title = "Model Performance by Type",
+    title = "Model Performance by Type - Pearson/Spearman",
     fill = "Mean",
     x = "Model Type",
     y = "Data Type"
   ) +
   labs(
-    title = "Model Performance by Type",
+    title = "Model Performance by Type - Pearson/Spearman",
     fill = "Mean Correlation"
   ) +
   theme_minimal() +
@@ -1092,7 +1123,323 @@ table_max$Model <- factor(table_max$Model, levels = col_names)
 ggplot(table_max, aes(x=type,fill=Model)) + 
   geom_bar(stat="identity",position="fill", aes(y=Max)) +
   labs(
-    title = "Proportion of Best-Performing Models By Data Type",
+    title = "Proportion of Best-Performing Models By Data Type - Pearson/Spearman",
+    x="Data Type",
+    y="Proportion",
+    fill="Model"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title=element_text(hjust=0.5)
+  )
+
+
+# spearman correlation metrics ##################################################
+# can run from here if already saved
+cor_unbiased <- read_csv("data/tabular/hgam_multiple_layers/cor_unbiased_sp.csv")
+cor_allbiased <- read_csv("data/tabular/hgam_multiple_layers/cor_allbiased_sp.csv")
+cor_po_unbiased <- read_csv("data/tabular/hgam_multiple_layers/cor_po_unbiased_sp.csv")
+cor_po_allbiased <- read_csv("data/tabular/hgam_multiple_layers/cor_po_allbiased_sp.csv")
+
+# compute averages
+cor_unbiased_avg <- cor_unbiased %>%
+  colMeans
+cor_unbiased_avg
+cor_allbiased_avg <- cor_allbiased %>%
+  colMeans
+cor_allbiased_avg
+cor_po_unbiased_avg <- cor_po_unbiased %>%
+  colMeans
+cor_po_unbiased_avg
+cor_po_allbiased_avg <- cor_po_allbiased %>%
+  colMeans
+cor_po_allbiased_avg
+
+# calculate overall how many of each model was the winner
+max_col_unbiased <- max.col(cor_unbiased)
+max_unbiased <- table(max_col_unbiased)
+names(max_unbiased) <- c("All Data, All Smooths", "Group + Species Data, All Smooths", "Species-Only Data, All Smooths", "Species-Only Smooths")
+max_unbiased
+
+max_col_allbiased <- max.col(cor_allbiased)
+max_allbiased <- table(max_col_allbiased)
+names(max_allbiased) <- c("All Data, All Smooths", "Group + Species Data, All Smooths", "Species-Only Data, All Smooths", "Species-Only Smooths")
+max_allbiased
+
+max_col_po_unbiased <- max.col(cor_po_unbiased)
+max_po_unbiased <- table(max_col_po_unbiased)
+names(max_po_unbiased) <- c("All Data, All Smooths", "Group + Species Data, All Smooths", "Species-Only Data, All Smooths", "Species-Only Smooths")
+max_po_unbiased
+
+max_col_po_allbiased <- max.col(cor_po_allbiased)
+max_po_allbiased <- table(max_col_po_allbiased)
+names(max_po_allbiased) <- c("All Data, All Smooths", "Group + Species Data, All Smooths", "Species-Only Data, All Smooths", "Species-Only Smooths")
+max_po_allbiased
+
+library(ggplot2)
+
+# converting them into format for analyzing
+df1 <- make_long(cor_unbiased, "PA Unbiased")
+df2 <- make_long(cor_allbiased, "PA Biased")
+df3 <- make_long(cor_po_unbiased, "PO Unbiased")
+df4 <- make_long(cor_po_allbiased, "PO Biased")
+
+all_data <- bind_rows(df1, df2, df3, df4)
+summary_df <- all_data %>%
+  group_by(Type, Model) %>%
+  summarize(
+    Mean = mean(Correlation),
+    SD = sd(Correlation),
+    .groups = "drop"
+  ) %>%
+  mutate(Label = paste0(
+    sprintf("%.4f", Mean), "\n(",
+    sprintf("%.4f", SD), ")"
+  ))
+
+summary_df$Model <- factor(summary_df$Model, levels=c("All Data, All Smooths", "Group + Species Data, All Smooths", "Species-Only Data, All Smooths", "Species-Only Smooths"))
+
+# creating a heatplot of means of correlations
+ggplot(summary_df, aes(x = Model, y = Type, fill = Mean)) +
+  geom_tile(color = "white") +
+  geom_text(aes(label = Label), color = "black", size = 4.2, lineheight = 0.9) +
+  scale_fill_gradient(low = "white", high = "steelblue") +
+  scale_x_discrete(labels = c(
+    E = "All Data, All Smooths",
+    GS = "Group + Species Data, All Smooths",
+    S = "Species-Only Data, All Smooths",
+    NoG = "Species-Only Smooths"
+  )) +
+  labs(
+    title = "Model Performance by Type - Spearman",
+    fill = "Mean",
+    x = "Model Type",
+    y = "Data Type"
+  ) +
+  labs(
+    title = "Model Performance by Type - Spearman",
+    fill = "Mean Correlation"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.x = element_text(hjust = 0.5),
+    plot.title = element_text(hjust = 0.5)
+  )
+
+# performance variable for how many times each model does best
+perf <- rbind(
+  'PA Unbiased' = max_unbiased,
+  'PA Biased' = max_allbiased,
+  'PO Unbiased' = max_po_unbiased,
+  'PO Biased' = max_po_allbiased
+)
+perf
+write.csv(
+  perf,
+  file = "data/tabular/hgam_multiple_layers/best_model_performance_sp.csv",
+  row.names = FALSE
+)
+
+col_names <- c("All Data, All Smooths", "Group + Species Data, All Smooths", "Species-Only Data, All Smooths", "Species-Only Smooths")
+
+# converting to better format for analyzing
+cor_unbiased_long <- cor_unbiased %>%
+  mutate(Row = row_number()) %>%
+  pivot_longer(cols = col_names, names_to = "Model", values_to = "Value")
+cor_allbiased_long <- cor_allbiased %>%
+  mutate(Row = row_number()) %>%
+  pivot_longer(cols = col_names, names_to = "Model", values_to = "Value")
+cor_po_unbiased_long <- cor_po_unbiased %>%
+  mutate(Row = row_number()) %>%
+  pivot_longer(cols = col_names, names_to = "Model", values_to = "Value")
+cor_po_allbiased_long <- cor_po_allbiased %>%
+  mutate(Row = row_number()) %>%
+  pivot_longer(cols = col_names, names_to = "Model", values_to = "Value")
+
+cor_unbiased_long$Model <- factor(cor_unbiased_long$Model, levels = col_names)
+cor_allbiased_long$Model <- factor(cor_allbiased_long$Model, levels = col_names)
+cor_po_unbiased_long$Model <- factor(cor_po_unbiased_long$Model, levels = col_names)
+cor_po_allbiased_long$Model <- factor(cor_po_allbiased_long$Model, levels = col_names)
+
+# can calculate the mean and plot the line on the plot if you want
+model_means_unbiased <- cor_unbiased_long %>%
+  group_by(Model) %>%
+  summarize(mean_val = mean(Value), .groups = "drop")
+model_means_allbiased <- cor_allbiased_long %>%
+  group_by(Model) %>%
+  summarize(mean_val = mean(Value), .groups = "drop")
+model_means_po_unbiased <- cor_po_unbiased_long %>%
+  group_by(Model) %>%
+  summarize(mean_val = mean(Value), .groups = "drop")
+model_means_po_allbiased <- cor_po_allbiased_long %>%
+  group_by(Model) %>%
+  summarize(mean_val = mean(Value), .groups = "drop")
+
+# plotting all correlation values
+ggplot(cor_unbiased_long, aes(x = Row, y = Value, color = Model)) +
+  geom_point(size = 2) +
+  # add this code if you want to see the mean on the plots as well
+  # geom_hline(data=model_means, aes(yintercept=mean_val, color=Model),
+  #           linetype="dashed", size=1) +
+  scale_color_manual(
+    values = c("All Data, All Smooths" = "black", "Group + Species Data, All Smooths" = "red", 
+               "Species-Only Data, All Smooths" = "blue", "Species-Only Smooths" = "green")
+  ) +
+  labs(
+    title = "Correlation Values by Model (Unbiased PA)",
+    x = "Observation",
+    y = "Correlation",
+    color = "Model"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5)
+  )
+
+ggplot(cor_allbiased_long, aes(x = Row, y = Value, color = Model)) +
+  geom_point(size = 2) +
+  # add this code if you want to see the mean on the plots as well
+  # geom_hline(data=model_means, aes(yintercept=mean_val, color=Model),
+  #           linetype="dashed", size=1) +
+  scale_color_manual(
+    values = c("All Data, All Smooths" = "black", "Group + Species Data, All Smooths" = "red", 
+               "Species-Only Data, All Smooths" = "blue", "Species-Only Smooths" = "green")
+  ) +
+  labs(
+    title = "Correlation Values by Model (Biased PA)",
+    x = "Observation",
+    y = "Correlation",
+    color = "Model"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5)
+  )
+
+ggplot(cor_po_unbiased_long, aes(x = Row, y = Value, color = Model)) +
+  geom_point(size = 2) +
+  # add this code if you want to see the mean on the plots as well
+  # geom_hline(data=model_means, aes(yintercept=mean_val, color=Model),
+  #           linetype="dashed", size=1) +
+  scale_color_manual(
+    values = c("All Data, All Smooths" = "black", "Group + Species Data, All Smooths" = "red", 
+               "Species-Only Data, All Smooths" = "blue", "Species-Only Smooths" = "green")
+  ) +
+  labs(
+    title = "Correlation Values by Model (Unbiased PO)",
+    x = "Observation",
+    y = "Correlation",
+    color = "Model"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5)
+  )
+
+ggplot(cor_po_allbiased_long, aes(x = Row, y = Value, color = Model)) +
+  geom_point(size = 2) +
+  # add this code if you want to see the mean on the plots as well
+  # geom_hline(data=model_means, aes(yintercept=mean_val, color=Model),
+  #           linetype="dashed", size=1) +
+  scale_color_manual(
+    values = c("All Data, All Smooths" = "black", "Group + Species Data, All Smooths" = "red", 
+               "Species-Only Data, All Smooths" = "blue", "Species-Only Smooths" = "green")
+  ) +
+  labs(
+    title = "Correlation Values by Model (Biased PO)",
+    x = "Observation",
+    y = "Correlation",
+    color = "Model"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5)
+  )
+
+
+# plotting boxplots for variations of correlations
+ggplot(cor_unbiased_long, aes(x=Model, y=Value, color=Model)) +
+  geom_boxplot(fill=NA, size=0.5) +
+  scale_color_manual(values = c("All Data, All Smooths" = "black", "Group + Species Data, All Smooths" = "red", 
+                                "Species-Only Data, All Smooths" = "blue", "Species-Only Smooths" = "green")) +
+  labs(
+    title = "Boxplot of Correlation Values by Model (Unbiased PA)",
+    x = "Model",
+    y = "Correlation"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none"
+  )
+
+ggplot(cor_allbiased_long, aes(x=Model, y=Value, color=Model)) +
+  geom_boxplot(fill=NA, size=0.5) +
+  scale_color_manual(values = c("All Data, All Smooths" = "black", "Group + Species Data, All Smooths" = "red", 
+                                "Species-Only Data, All Smooths" = "blue", "Species-Only Smooths" = "green")) +
+  labs(
+    title = "Boxplot of Correlation Values by Model (Biased PA)",
+    x = "Model",
+    y = "Correlation"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none"
+  )
+
+ggplot(cor_po_unbiased_long, aes(x=Model, y=Value, color=Model)) +
+  geom_boxplot(fill=NA, size=0.5) +
+  scale_color_manual(values = c("All Data, All Smooths" = "black", "Group + Species Data, All Smooths" = "red", 
+                                "Species-Only Data, All Smooths" = "blue", "Species-Only Smooths" = "green")) +
+  labs(
+    title = "Boxplot of Correlation Values by Model (Unbiased PO)",
+    x = "Model",
+    y = "Correlation"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none"
+  )
+
+ggplot(cor_po_allbiased_long, aes(x=Model, y=Value, color=Model)) +
+  geom_boxplot(fill=NA, size=0.5) +
+  scale_color_manual(values = c("All Data, All Smooths" = "black", "Group + Species Data, All Smooths" = "red", 
+                                "Species-Only Data, All Smooths" = "blue", "Species-Only Smooths" = "green")) +
+  labs(
+    title = "Boxplot of Correlation Values by Model (Biased PO)",
+    x = "Model",
+    y = "Correlation"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.position = "none"
+  )
+
+colnames(perf) <- c("E", "GS", "S", "NoG")
+
+
+# getting a table of best-performing models
+table_max <- data.frame(perf) %>%
+  mutate(type = rownames(.)) %>%
+  pivot_longer(cols = c(E, GS, S, NoG), names_to = "Model", values_to = "Max") %>%
+  mutate(Model=recode(Model,
+                      E = "All Data, All Smooths",
+                      GS = "Group + Species Data, All Smooths",
+                      S = "Species-Only Data, All Smooths",
+                      NoG = "Species-Only Smooths"
+  ))
+
+
+table_max$Model <- factor(table_max$Model, levels = col_names)
+
+# plotting stacked bar plot
+ggplot(table_max, aes(x=type,fill=Model)) + 
+  geom_bar(stat="identity",position="fill", aes(y=Max)) +
+  labs(
+    title = "Proportion of Best-Performing Models By Data Type - Spearman",
     x="Data Type",
     y="Proportion",
     fill="Model"

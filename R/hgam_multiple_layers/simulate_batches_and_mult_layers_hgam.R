@@ -497,10 +497,10 @@ for(x in 9:n){
     cor_unbiased[[x]][i, 2] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS_gp[[i]])
     cor_unbiased[[x]][i, 3] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS_nocp[[i]])
     cor_unbiased[[x]][i, 4] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS_nogp[[i]])
-    cor_unbiased_sp[[x]][i, 1] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS[[i]])
-    cor_unbiased_sp[[x]][i, 2] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS_gp[[i]])
-    cor_unbiased_sp[[x]][i, 3] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS_nocp[[i]])
-    cor_unbiased_sp[[x]][i, 4] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS_nogp[[i]])
+    cor_unbiased_sp[[x]][i, 1] <- compute_cor_po(prob_pres_sp[[i]], pred_pa_modGS[[i]])
+    cor_unbiased_sp[[x]][i, 2] <- compute_cor_po(prob_pres_sp[[i]], pred_pa_modGS_gp[[i]])
+    cor_unbiased_sp[[x]][i, 3] <- compute_cor_po(prob_pres_sp[[i]], pred_pa_modGS_nocp[[i]])
+    cor_unbiased_sp[[x]][i, 4] <- compute_cor_po(prob_pres_sp[[i]], pred_pa_modGS_nogp[[i]])
   }
   
 
@@ -583,10 +583,10 @@ for(x in 9:n){
     cor_allbiased[[x]][i, 2] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS_allbiased_gp[[i]])
     cor_allbiased[[x]][i, 3] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS_allbiased_nocp[[i]])
     cor_allbiased[[x]][i, 4] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS_allbiased_nogp[[i]])
-    cor_allbiased_sp[[x]][i, 1] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS_allbiased[[i]])
-    cor_allbiased_sp[[x]][i, 2] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS_allbiased_gp[[i]])
-    cor_allbiased_sp[[x]][i, 3] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS_allbiased_nocp[[i]])
-    cor_allbiased_sp[[x]][i, 4] <- compute_cor(prob_pres_sp[[i]], pred_pa_modGS_allbiased_nogp[[i]])
+    cor_allbiased_sp[[x]][i, 1] <- compute_cor_po(prob_pres_sp[[i]], pred_pa_modGS_allbiased[[i]])
+    cor_allbiased_sp[[x]][i, 2] <- compute_cor_po(prob_pres_sp[[i]], pred_pa_modGS_allbiased_gp[[i]])
+    cor_allbiased_sp[[x]][i, 3] <- compute_cor_po(prob_pres_sp[[i]], pred_pa_modGS_allbiased_nocp[[i]])
+    cor_allbiased_sp[[x]][i, 4] <- compute_cor_po(prob_pres_sp[[i]], pred_pa_modGS_allbiased_nogp[[i]])
   }
   
   ### presence-only data! *******************************************************
@@ -664,14 +664,14 @@ for(x in 9:n){
     plot(pred_po_modGS_nogp[[i]], main = paste("Species", i, "- unbiased No GP"))
     
     # computing correlations
-    cor_po_unbiased[[x]][i, 1] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS[[i]])
-    cor_po_unbiased[[x]][i, 2] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_gp[[i]])
-    cor_po_unbiased[[x]][i, 3] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_nocp[[i]])
-    cor_po_unbiased[[x]][i, 4] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_nogp[[i]])
-    cor_po_unbiased_sp[[x]][i, 1] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS[[i]])
-    cor_po_unbiased_sp[[x]][i, 2] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_gp[[i]])
-    cor_po_unbiased_sp[[x]][i, 3] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_nocp[[i]])
-    cor_po_unbiased_sp[[x]][i, 4] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_nogp[[i]])
+    cor_po_unbiased[[x]][i, 1] <- compute_cor_po(prob_pres_sp[[i]], pred_po_modGS[[i]])
+    cor_po_unbiased[[x]][i, 2] <- compute_cor_po(prob_pres_sp[[i]], pred_po_modGS_gp[[i]])
+    cor_po_unbiased[[x]][i, 3] <- compute_cor_po(prob_pres_sp[[i]], pred_po_modGS_nocp[[i]])
+    cor_po_unbiased[[x]][i, 4] <- compute_cor_po(prob_pres_sp[[i]], pred_po_modGS_nogp[[i]])
+    cor_po_unbiased_sp[[x]][i, 1] <- compute_cor_po(prob_pres_sp[[i]], pred_po_modGS[[i]])
+    cor_po_unbiased_sp[[x]][i, 2] <- compute_cor_po(prob_pres_sp[[i]], pred_po_modGS_gp[[i]])
+    cor_po_unbiased_sp[[x]][i, 3] <- compute_cor_po(prob_pres_sp[[i]], pred_po_modGS_nocp[[i]])
+    cor_po_unbiased_sp[[x]][i, 4] <- compute_cor_po(prob_pres_sp[[i]], pred_po_modGS_nogp[[i]])
   }
   
   # biased po data #############################################################
@@ -748,14 +748,14 @@ for(x in 9:n){
     plot(pred_po_modGS_allbiased_nogp[[i]], main = paste("Species", i, "- biased No GP"))
     
     # computing correlations
-    cor_po_allbiased[[x]][i, 1] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_allbiased[[i]])
-    cor_po_allbiased[[x]][i, 2] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_allbiased_gp[[i]])
-    cor_po_allbiased[[x]][i, 3] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_allbiased_nocp[[i]])
-    cor_po_allbiased[[x]][i, 4] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_allbiased_nogp[[i]])
-    cor_po_allbiased_sp[[x]][i, 1] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_allbiased[[i]])
-    cor_po_allbiased_sp[[x]][i, 2] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_allbiased_gp[[i]])
-    cor_po_allbiased_sp[[x]][i, 3] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_allbiased_nocp[[i]])
-    cor_po_allbiased_sp[[x]][i, 4] <- compute_cor(prob_pres_sp[[i]], pred_po_modGS_allbiased_nogp[[i]])
+    cor_po_allbiased[[x]][i, 1] <- compute_cor_po(prob_pres_sp[[i]], pred_po_modGS_allbiased[[i]])
+    cor_po_allbiased[[x]][i, 2] <- compute_cor_po(prob_pres_sp[[i]], pred_po_modGS_allbiased_gp[[i]])
+    cor_po_allbiased[[x]][i, 3] <- compute_cor_po(prob_pres_sp[[i]], pred_po_modGS_allbiased_nocp[[i]])
+    cor_po_allbiased[[x]][i, 4] <- compute_cor_po(prob_pres_sp[[i]], pred_po_modGS_allbiased_nogp[[i]])
+    cor_po_allbiased_sp[[x]][i, 1] <- compute_cor_po(prob_pres_sp[[i]], pred_po_modGS_allbiased[[i]])
+    cor_po_allbiased_sp[[x]][i, 2] <- compute_cor_po(prob_pres_sp[[i]], pred_po_modGS_allbiased_gp[[i]])
+    cor_po_allbiased_sp[[x]][i, 3] <- compute_cor_po(prob_pres_sp[[i]], pred_po_modGS_allbiased_nocp[[i]])
+    cor_po_allbiased_sp[[x]][i, 4] <- compute_cor_po(prob_pres_sp[[i]], pred_po_modGS_allbiased_nogp[[i]])
   }
 }
 
@@ -839,25 +839,32 @@ cor_po_allbiased_avg <- cor_po_allbiased %>%
   colMeans
 cor_po_allbiased_avg
 
+id_map <- c(
+  "1" = "All Data, All Smooths",
+  "2" = "Group + Species Data, All Smooths",
+  "3" = "Species-Only Data, All Smooths",
+  "4" = "Species-Only Smooths"
+)
+
 # calculate overall how many of each model was the winner
-max_col_unbiased <- max.col(cor_unbiased)
+max_col_unbiased <- factor(max.col(cor_unbiased), levels=names(id_map))
 max_unbiased <- table(max_col_unbiased)
-names(max_unbiased) <- c("All Data, All Smooths", "Group + Species Data, All Smooths", "Species-Only Data, All Smooths", "Species-Only Smooths")
+names(max_unbiased) <- id_map[names(max_unbiased)]
 max_unbiased
 
-max_col_allbiased <- max.col(cor_allbiased)
+max_col_allbiased <- factor(max.col(cor_allbiased), levels=names(id_map))
 max_allbiased <- table(max_col_allbiased)
-names(max_allbiased) <- c("All Data, All Smooths", "Group + Species Data, All Smooths", "Species-Only Data, All Smooths", "Species-Only Smooths")
+names(max_allbiased) <- id_map[names(max_allbiased)]
 max_allbiased
 
-max_col_po_unbiased <- max.col(cor_po_unbiased)
+max_col_po_unbiased <- factor(max.col(cor_po_unbiased), levels=names(id_map))
 max_po_unbiased <- table(max_col_po_unbiased)
-names(max_po_unbiased) <- c("All Data, All Smooths", "Group + Species Data, All Smooths", "Species-Only Data, All Smooths", "Species-Only Smooths")
+names(max_po_unbiased) <- id_map[names(max_po_unbiased)]
 max_po_unbiased
 
-max_col_po_allbiased <- max.col(cor_po_allbiased)
+max_col_po_allbiased <- factor(max.col(cor_po_allbiased), levels=names(id_map))
 max_po_allbiased <- table(max_col_po_allbiased)
-names(max_po_allbiased) <- c("All Data, All Smooths", "Group + Species Data, All Smooths", "Species-Only Data, All Smooths", "Species-Only Smooths")
+names(max_po_allbiased) <- id_map[names(max_po_allbiased)]
 max_po_allbiased
 
 library(ggplot2)
@@ -1156,24 +1163,24 @@ cor_po_allbiased_avg <- cor_po_allbiased %>%
 cor_po_allbiased_avg
 
 # calculate overall how many of each model was the winner
-max_col_unbiased <- max.col(cor_unbiased)
+max_col_unbiased <- factor(max.col(cor_unbiased), levels=names(id_map))
 max_unbiased <- table(max_col_unbiased)
-names(max_unbiased) <- c("All Data, All Smooths", "Group + Species Data, All Smooths", "Species-Only Data, All Smooths", "Species-Only Smooths")
+names(max_unbiased) <- id_map[names(max_unbiased)]
 max_unbiased
 
-max_col_allbiased <- max.col(cor_allbiased)
+max_col_allbiased <- factor(max.col(cor_allbiased), levels=names(id_map))
 max_allbiased <- table(max_col_allbiased)
-names(max_allbiased) <- c("All Data, All Smooths", "Group + Species Data, All Smooths", "Species-Only Data, All Smooths", "Species-Only Smooths")
+names(max_allbiased) <- id_map[names(max_allbiased)]
 max_allbiased
 
-max_col_po_unbiased <- max.col(cor_po_unbiased)
+max_col_po_unbiased <- factor(max.col(cor_po_unbiased), levels=names(id_map))
 max_po_unbiased <- table(max_col_po_unbiased)
-names(max_po_unbiased) <- c("All Data, All Smooths", "Group + Species Data, All Smooths", "Species-Only Data, All Smooths", "Species-Only Smooths")
+names(max_po_unbiased) <- id_map[names(max_po_unbiased)]
 max_po_unbiased
 
-max_col_po_allbiased <- max.col(cor_po_allbiased)
+max_col_po_allbiased <- factor(max.col(cor_po_allbiased), levels=names(id_map))
 max_po_allbiased <- table(max_col_po_allbiased)
-names(max_po_allbiased) <- c("All Data, All Smooths", "Group + Species Data, All Smooths", "Species-Only Data, All Smooths", "Species-Only Smooths")
+names(max_po_allbiased) <- id_map[names(max_po_allbiased)]
 max_po_allbiased
 
 library(ggplot2)

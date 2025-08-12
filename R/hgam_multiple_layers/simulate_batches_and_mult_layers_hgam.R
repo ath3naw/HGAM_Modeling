@@ -80,7 +80,7 @@ cor_po_allbiased_sp <- vector("list", length=n)
 # initializing variable, all_bias, will overwrite later
 all_bias <- mad_mask
 
-# running n number of simulations # on part 10, unbiased presence-absence data
+# running n number of simulations
 for(x in 1:n){
   # Preparing raster data *******************************************************
   # complex-level deviations

@@ -80,8 +80,8 @@ cor_po_allbiased_sp <- vector("list", length=n)
 # initializing variable, all_bias, will overwrite later
 all_bias <- mad_mask
 
-# running n number of simulations ### on 8 run pa unbiased species
-for(x in 9:n){
+# running n number of simulations # on part 10, unbiased presence-absence data
+for(x in 1:n){
   # Preparing raster data *******************************************************
   # complex-level deviations
   complex_data <- data.frame(
@@ -1455,3 +1455,4 @@ ggplot(table_max, aes(x=type,fill=Model)) +
   theme(
     plot.title=element_text(hjust=0.5)
   )
+

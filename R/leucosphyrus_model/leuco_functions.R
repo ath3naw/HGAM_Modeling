@@ -59,3 +59,24 @@ sdm_predict <- function(
   
   return(prediction)
 }
+
+# splits and cleans Collection methods
+split_collection_methods <- function(sample_methods) {
+  # Replace ' and ' with ',' for consistent splitting
+  cleaned <- gsub(" and ", ",", sample_methods)
+  # Split by ',')
+  split_methods <- strsplit(cleaned, ",")
+  # Trim whitespace
+  lapply(split_methods, function(x) trimws(x))
+}
+
+# creates data frame with method1, method2, etc. headings to document sampling methods
+get_methods_df <- function(sample_methods) {
+  methods_list <- split_collection_methods(sample_methods)
+  max_methods <- max(sapply(methods_list, length))
+  # Pad each vector to max_methods with NA
+  padded <- lapply(methods_list, function(x) { length(x) <- max_methods; x })
+  methods_df <- as.data.frame(do.call(rbind, padded))
+  colnames(methods_df) <- paste0("method", seq_len(max_methods))
+  return(methods_df)
+}

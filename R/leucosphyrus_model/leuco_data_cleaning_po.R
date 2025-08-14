@@ -33,7 +33,13 @@ off
 # ok, the things that are off are fine, borders are just not that accurate
 
 # ok so these are presence-only points
-asia_vec_data <- asia_vec_data |> rename(lonx=longitude, laty=latitude, Species=species_plain)
+asia_vec_data <- asia_vec_data |> rename(lonx=longitude, laty=latitude, Species=species_plain, method1=sample_method1, method2=sample_method2)
 write.csv(asia_vec_data,
           file = "leuco_data/asia_vec_data.csv",
+          row.names = FALSE)
+method_list <- c(unique(asia_vec_data$method1), unique(asia_vec_data$method2))
+method_list <- unique(method_list)
+method_list <- method_list[!is.na(method_list)]
+write.csv(method_list,
+          file = "leuco_data/sample_methods.csv",
           row.names = FALSE)

@@ -120,10 +120,43 @@ pa_tabular <- leuco_data %>%
   group_by(lonx, laty) %>%
   mutate(site_id = cur_group_id()) %>%
   ungroup() %>%
-  select(site_id, lonx, laty, Species, Number) |>
+  select(site_id, lonx, laty, Species, Number, Collection) |>
   mutate(not_complex = ifelse(Species %in% c("Leucosphyrus Subgroup", "Dirus Complex", "Leucosphyrus Group"), 0, 1)) |>
   mutate(dirus = ifelse(Species %in% c("Dirus Complex", "Anopheles Dirus", "Anopheles Cracens", "Anopheles Scanloni", "Anopheles Baimaii", "Anopheles Elegans", "Anopheles Takasagoensis", "Anopheles Nemophilous"), 1, 0)) |>
   mutate(leucosphyrus = ifelse(Species %in% c("Leucosphyrus Complex", "Anopheles Leucosphyrus", "Anopheles Latens", "Anopheles Introlatus", "Anopheles Balabacensis", "Anopheles Baisasi"), 1, 0))
+
+methods <- read_csv("leuco_data/sample_methods.csv")
+pa_tabular$Collection <- tolower(pa_tabular$Collection)
+
+# add on standardized Collection data in model data format
+methods_df <- get_methods_df(pa_tabular$Collection)
+pa_tabular <- cbind(pa_tabular, methods_df)
+pa_tabular <- pa_tabular |>
+  select(-Collection)
+
+# clean collection method data to be standardized
+pa_tabular$method1[pa_tabular$method1 %in% c("outdoor human leg catch", "outdoor human landing catches", 
+                                                   "human landing catch cultivation sites", "outdoor human-landing catch",
+                                                   "outdoor human landing catch", "outdoor bare-leg capture")] <- "man biting outdoors"
+pa_tabular$method1[pa_tabular$method1 %in% c("human landing catch house","indoor human leg catch")] <- "man biting indoors"
+pa_tabular$method1[pa_tabular$method1 %in% c("human landing catch","human-landing catch")] <- "man biting"
+pa_tabular$method1[grepl("mosquito magnet", pa_tabular$method1)] <- "carbon dioxide baited net trap"
+pa_tabular$method1[pa_tabular$method1 %in% c("human-baited double net traps (hbnt)", "human baited trap", 
+                                             "human-baited electrocuting net")] <- "human baited net trap"
+pa_tabular$method1[pa_tabular$method1 %in% c("cattle baited net trap collections", "monkey-baited trap", 
+                                             "monkey-baited electrocuting net")] <- "animal baited net trap"
+pa_tabular$method1[grepl("light trap", pa_tabular$method1)] <- "light trap"
+pa_tabular$method2[grepl("mosquito magnet", pa_tabular$method2)] <- "carbon dioxide baited net trap"
+pa_tabular$method2[grepl("light trap", pa_tabular$method2)] <- "light trap"
+pa_tabular$method2[pa_tabular$method2 %in% c("cattle bait collection", "cow-bait trap",
+                                             "cow bait collection")] <- "animal baited net trap"
+pa_tabular$method2[pa_tabular$method2 %in% c("human-baited double net traps (hbnt)", "human baited trap", 
+                                             "human-baited electrocuting net")] <- "human baited net trap"
+pa_tabular$method2[pa_tabular$method2 %in% c("outdoor resting catch")] <- "resting outdoors"
+pa_tabular$method3[grepl("light trap", pa_tabular$method3)] <- "light trap"
+pa_tabular$method3[pa_tabular$method3 %in% c("human-baited double net traps (hbnt)", "human baited trap", 
+                                             "human-baited electrocuting net")] <- "human baited net trap"
+pa_tabular$method4[grepl("mosquito magnet", pa_tabular$method4)] <- "carbon dioxide baited net trap"
 
 # find max number of sites collected
 max_id <- max(pa_tabular$site_id)
